@@ -29,7 +29,7 @@ export default class App extends Component {
         return (
             <div id="app">
                 <Router onChange={this.handleRoute}>
-                    <Home path="{pages.home}" />
+                    <Home path={pages.home} />
                     <Signin path={pages.signin} />
                     <Home default />
                 </Router>
