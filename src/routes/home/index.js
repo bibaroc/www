@@ -1,6 +1,6 @@
 import { Component } from 'preact';
 
-class Home extends Component {
+export default class Home extends Component {
     constructor() {
         super();
         this.state = {};
@@ -13,5 +13,3 @@ class Home extends Component {
         );
     }
 }
-
-export { Home };

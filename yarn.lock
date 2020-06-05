@@ -3280,7 +3280,7 @@ escodegen@^1.11.0:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-synacor@^3.0.4:
+eslint-config-synacor@^3.0.5:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/eslint-config-synacor/-/eslint-config-synacor-3.0.5.tgz#b85a3e53de6d9547770539ea7cf0ec3ae938bf35"
   integrity sha512-JsIJqlGwlDJT1UMRVs78MTkcqTVTQnTr88tzX+3mocQrL8ri6ikP19vAemr23KXOnQb2u1hxPbSqmDeM55aN9A==

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "preact build --template ./index.html",
+    "build": "preact build --template ./index.html --clean --production",
     "serve": "sirv build --cors --single",
     "dev": "preact watch --template ./index.html",
     "lint": "eslint src"
@@ -12,7 +12,8 @@
   "eslintConfig": {
     "extends": "eslint-config-synacor",
     "rules": {
-      "indent": ["error", 4, {"ignoredNodes": ["JSXAttribute"]}]
+      "indent": ["error", 4, {"ignoredNodes": ["JSXAttribute"]}],
+      "no-console": 0
     }
   },
   "eslintIgnore": [
