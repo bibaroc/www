@@ -1,0 +1,34 @@
+---
+- name: boot website
+  become: yes
+  become_method: sudo
+  hosts: all
+  tasks:
+    - name: install nginx
+      package:
+        name: "nginx={{ nginx_version }}"
+        state: present
+
+    - name: install certbot
+      package:
+        name: "certbot={{ certbot_version }}"
+        state: present
+  
+
+    - name: "check previous certificates for {{ domain }}"
+      stat:
+        path: "/etc/letsencrypt/live/{{ domain }}"
+      register: cert_dir
+
+    - block:
+        - name: stop nginx
+          service:
+            name: nginx
+            state: stopped
+        - name: "get certificates for {{ domain }}"
+          command: "certbot certonly -n --standalone -d {{ domain }}  --agree-tos -m {{ email }}"
+        - name: start nginx
+          service:
+            name: nginx
+            state: started
+      when: not cert_dir.stat.exists
