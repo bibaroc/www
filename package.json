@@ -12,7 +12,7 @@
   "eslintConfig": {
     "extends": "eslint-config-synacor",
     "rules": {
-      "indent": ["error", 4, {"ignoredNodes": ["JSXAttribute"]}],
+      "indent": ["error", 4,{"ignoredNodes": ["JSXAttribute"]}],
       "no-console": 0
     }
   },
@@ -26,6 +26,8 @@
     "sirv-cli": "^0.4.5"
   },
   "dependencies": {
+    "@material-ui/core": "^4.10.1",
+    "@material-ui/icons": "^4.9.1",
     "preact": "^10.1.0",
     "preact-render-to-string": "^5.1.2",
     "preact-router": "^3.2.1"
