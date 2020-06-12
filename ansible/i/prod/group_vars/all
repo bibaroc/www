@@ -1,0 +1,6 @@
+---
+nginx_version: 1.17.10-0ubuntu1
+certbot_version: 0.40.0-1
+
+domain: app.dyslav.it
+email: vl@dyslav.it
