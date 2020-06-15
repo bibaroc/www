@@ -1,0 +1,102 @@
+
+  # Specify file cache expiration.
+  include h5bp/web_performance/cache_expiration.conf;
+  include h5bp/security/server_software_information.conf;
+
+  # h5bp/security/x-xss-protection.conf
+  map $sent_http_content_type $x_xss_protection {
+    #           (1)    (2)
+    ~*text/html "1; mode=block";
+  }
+
+  # h5bp/security/x-frame-options.conf
+  map $sent_http_content_type $x_frame_options {
+    ~*text/html DENY;
+  }
+
+  # h5bp/security/content-security-policy.conf
+  map $sent_http_content_type $content_security_policy {
+    ~*text/(html|javascript)|application/pdf|xml "default-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests";
+  }
+
+  # h5bp/security/referrer-policy.conf.conf
+  map $sent_http_content_type $referrer_policy {
+    ~*text/(css|html|javascript)|application\/pdf|xml "strict-origin-when-cross-origin";
+  }
+
+  # h5bp/internet_explorer/x-ua-compatible.conf
+  map $sent_http_content_type $x_ua_compatible {
+    ~*text/html "IE=edge";
+  }
+
+  # h5bp/cross-origin/requests.conf
+  map $sent_http_content_type $cors {
+    # Images
+    ~*image/ "*";
+
+    # Web fonts
+    ~*font/                         "*";
+    ~*application/vnd.ms-fontobject "*";
+    ~*application/x-font-ttf        "*";
+    ~*application/font-woff         "*";
+    ~*application/x-font-woff       "*";
+    ~*application/font-woff2        "*";
+  }
+
+
+server {
+    listen                  443 ssl http2;
+    listen                  [::]:443 ssl http2;
+    server_name             {{ domain }};
+    root                    /var/www/{{ domain }}/public;
+
+    ssl_certificate         /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+    ssl_certificate_key     /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+    
+    include h5bp/basic.conf;
+    
+    include h5bp/ssl/ssl_engine.conf;
+    include h5bp/ssl/policy_modern.conf;
+
+
+    include h5bp/media_types/character_encodings.conf;
+
+    sendfile on;
+    tcp_nopush on;
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log    off;
+    }
+    location = /robots.txt {
+        log_not_found off;
+        access_log    off;
+    }
+
+    {% for path in mappings %}
+      {% if "/" == path %}
+        location / {
+      {% else %}
+        location = {{ path }} {
+      {% endif %}
+
+      {% for obj in mappings[path] %}
+        http2_push /{{ obj }};
+      {% endfor %}
+
+      {% if "/" != path %}
+        try_files $uri $uri/ /index.html;
+      {% endif %}
+        }
+    {% endfor %}
+}
+
+server {
+    listen  80;
+    listen  [::]:80;
+    server_name             {{ domain }};
+
+    location / {
+        return 301 https://{{ domain }}$request_uri;
+    }
+}

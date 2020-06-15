@@ -13,22 +13,50 @@
       package:
         name: "certbot={{ certbot_version }}"
         state: present
-  
 
     - name: "check previous certificates for {{ domain }}"
       stat:
         path: "/etc/letsencrypt/live/{{ domain }}"
       register: cert_dir
 
-    - block:
-        - name: stop nginx
-          service:
+    - name: "get certificates for {{ domain }}"
+      block:
+        - service:
             name: nginx
             state: stopped
-        - name: "get certificates for {{ domain }}"
-          command: "certbot certonly -n --standalone -d {{ domain }}  --agree-tos -m {{ email }}"
-        - name: start nginx
-          service:
+        - command: "certbot certonly -n --standalone -d {{ domain }}  --agree-tos -m {{ email }}"
+        - service:
             name: nginx
             state: started
       when: not cert_dir.stat.exists
+
+    - name: "check previous conf_dir installation"
+      stat:
+        path: /etc/nginx/h5bp
+      register: conf_dir
+
+    - name: "copy nginx config"
+      copy:
+        src: h5bp/
+        dest: /etc/nginx/h5bp
+      when: force_nginx_conf or not conf_dir.stat.exists
+
+    - name: copy website configuration and files
+      block:
+        - file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - /etc/nginx/sites-enabled/default
+            - "/var/www/{{ domain }}/public/"
+        - set_fact:
+            mappings: "{{ lookup('file', '../build/push-manifest.json') | from_json }}"
+        - template:
+            src: website.conf.j2
+            dest: "/etc/nginx/sites-enabled/{{ domain }}"
+        -  copy:
+            src: ../build/
+            dest: "/var/www/{{ domain }}/public/"
+        - service:
+            name: nginx
+            state: restarted

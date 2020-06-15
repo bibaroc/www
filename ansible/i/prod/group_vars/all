@@ -4,3 +4,5 @@ certbot_version: 0.40.0-1
 
 domain: app.dyslav.it
 email: vl@dyslav.it
+
+force_nginx_conf: false
