@@ -1,6 +1,6 @@
 {
-  "name": "www",
-  "short_name": "www",
+  "name": "maintenance",
+  "short_name": "app",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
