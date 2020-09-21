@@ -42,3 +42,7 @@ bin:
 	@for CMD in $(shell find ./backend/cmd/* -maxdepth 0 -type d -name '*' ) ; do \
 		$(MAKE) -f $(THIS_FILE) bin/$$(basename $${CMD}); \
 	done;
+
+up: bin
+	@yarn build
+	@docker-compose up
